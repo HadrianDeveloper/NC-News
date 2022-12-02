@@ -4,7 +4,6 @@ const db = require('../db/connection.js');
 const app = require('../app.js');
 const seed  = require('../db/seeds/seed.js');
 const testData = require('../db/data/test-data/index.js');
-const { test, expect } = require('@jest/globals');
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -115,18 +114,17 @@ describe('/api/articles', () => {
         .get('/api/articles?sort_by=comment_count')
         .expect(200)
         .then(({body}) => {
-            console.log(body.allArticles)
             expect(body.allArticles.length).toBe(12);
             expect(body.allArticles).toBeSortedBy('comment_count', { descending: true})
         })
     });
 
-    test('SORT - if sort_by column does not exist, defaults to standard [created_at]', () => {
+    test('SORT - send 404 error and msg if sort_by does not exist', () => {
         return request(app)
         .get('/api/articles?sort_by=pelican')
-        .expect(200)
+        .expect(404)
         .then(({body}) => {
-            expect(body.allArticles).toBeSortedBy('created_at', { descending: true})
+            expect(body.msg).toBe('Invalid column name!')
         });
     });
 
@@ -157,7 +155,6 @@ describe('/api/articles', () => {
         });
     });
 });
-
 
 describe('/api/articles/:article_id', () => {
     test('Respond with 200 code and an article object', () => {
@@ -488,4 +485,4 @@ describe('GET /api/users', () => {
         })
     });
 
-})
+});

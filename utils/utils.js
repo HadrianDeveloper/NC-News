@@ -24,6 +24,19 @@ exports.checkTopicExists = (topic) => {
     })
 };
 
+exports.checkSortExists = (sort) => {
+    console.log(sort)
+
+    return db
+    .query('SELECT $1 FROM articles', [sort])
+    .then(({rowCount}) => {
+        console.log(rowCount)
+        return rowCount ? true : false;
+    })
+};
+
+
+
 exports.checkObjectStructure = (method, obj) => {
     if (method === 'POST') {
         return ['body', 'username'].every((key) => key in obj)

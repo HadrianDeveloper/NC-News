@@ -5,7 +5,7 @@ exports.handle404s = (req, res) => {
 exports.handleCustomErrors = (err, req, res, next) => {
     const { statusCode, msg } = err;
     res.status(statusCode).send({msg})
-}
+};
 
 exports.handlePSQLerrors = (err, req, res, next) => {
     if (err.code === '22P02') {

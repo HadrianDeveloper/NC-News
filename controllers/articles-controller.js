@@ -1,7 +1,6 @@
 const { selectAllArticles, selectArticleById, selectCommentsForArticle, insertComment, updateArticle } = require("../models/articles-model.js");
 const { checkArticleExists, checkUserExists, checkTopicExists, checkObjectStructure } = require("../utils/utils.js")
 
-
 exports.getAllArticles = (req, res, next) => {
     const query = req.query;
 
@@ -11,6 +10,7 @@ exports.getAllArticles = (req, res, next) => {
             if (!topicExists) next({ statusCode: 404, msg: 'Topic not found!'});
         })
     };
+
     selectAllArticles(query)
     .then((allArticles) => {
         res.status(200).send({allArticles: allArticles})
@@ -29,6 +29,14 @@ exports.getArticleById = (req, res, next) => {
     selectArticleById(id)
     .then((article) => {
         res.status(200).send({article})
+    })
+    .catch(next)
+};
+
+exports.getArticleById2 = (req, res, next) => {
+    selectArticleById(req.params.article_id)
+    .then((article) => {
+        res.status(200).send({ article })
     })
     .catch(next)
 };

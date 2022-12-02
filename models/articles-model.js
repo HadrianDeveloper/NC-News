@@ -14,10 +14,15 @@ exports.selectAllArticles = (query) => {
 
     sqlQuery += `GROUP BY 3 ORDER BY `;
 
+
     let sort = query.sort_by;
+        if (!sort) sort = 'created_at';
+
     const permittedSorts = ['title', 'topic', 'created_at', 'article_id', 'author', 'votes', 'comment_count'];
-        if (!permittedSorts.includes(sort)) sort = 'created_at';
-        
+        if (!permittedSorts.includes(sort)) {
+            return Promise.reject({statusCode: 404, msg: 'Invalid column name!'})
+        };
+
     sqlQuery += (sort === 'comment_count') ? 
         `comment_count ` : `articles.${sort} `; 
 
@@ -28,11 +33,8 @@ exports.selectAllArticles = (query) => {
     return db.query(sqlQuery).then(({rows}) => {
         return rows; 
     })
+
 };
-
-
-
-
 
 exports.selectArticleById = (id) => {
     return db
@@ -46,6 +48,23 @@ exports.selectArticleById = (id) => {
             : rows;
     })
 };
+
+exports.selectArticleById2 = (id) => {
+    return db
+      .select('articles.*')
+      .count({ comment_count: 'comment_id' })
+      .from('articles')
+      .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
+      .groupBy('articles.article_id')
+      .modify(query => {
+        if (id) query.where('articles.article_id', '=', id);
+      })
+      .then(([article]) => {
+        return article
+          ? article
+          : Promise.reject({ status: 404, msg: 'Non-existent id!' });
+      });
+  };
 
 exports.selectCommentsForArticle = (id) => {
     return db
