@@ -21,3 +21,9 @@ After cloning this repo, you must create the following two files in your root di
 
 This will grant access to the required environment variables on your local machine, and subsequently, enable connection to the test and development databases.
 
+### Domain
+
+https://persian-blue-millipede-veil.cyclic.app
+    /api/articles
+    /api/users
+    etc.

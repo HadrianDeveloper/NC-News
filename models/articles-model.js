@@ -31,6 +31,7 @@ exports.selectAllArticles = (query) => {
         sqlQuery += direction;
 
     return db.query(sqlQuery).then(({rows}) => {
+        console.log(rows)
         return rows; 
     })
 

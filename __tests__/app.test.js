@@ -1,5 +1,5 @@
 const request = require('supertest');
-const sort = require('jest-sorted')
+const sort = require('jest-sorted');
 const db = require('../db/connection.js');
 const app = require('../app.js');
 const seed  = require('../db/seeds/seed.js');
@@ -25,6 +25,7 @@ describe('/api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then(({body}) => {
+            console.log(body.allTopics)
             expect(Array.isArray(body.allTopics)).toBe(true);
             expect(body.allTopics.length).toBe(3);
             body.allTopics.forEach((topic) => {
@@ -162,6 +163,7 @@ describe('/api/articles/:article_id', () => {
         .get('/api/articles/1')
         .expect(200)
         .then(({body}) => {
+            console.log(body)
             expect(Object.keys(body.article[0]).length).toBe(7);
             expect(body.article[0]).toMatchObject({
                     author: expect.any(String),
@@ -486,3 +488,53 @@ describe('GET /api/users', () => {
     });
 
 });
+
+describe('DELETE + GET COMMENTS /api/comments/:comment_id', () => {
+
+    let totalCommentsBeforeDelete = 0
+
+    test('Returns 200 and array of comments', () => {
+        return request(app)
+        .get('/api/comments')
+        .expect(200)
+        .then(({body}) => {
+            totalCommentsBeforeDelete = body.comments.length
+            expect(Array.isArray(body.comments)).toBe(true);
+            expect(body.comments.length).toBe(18);
+            expect(Object.keys(body.comments[0]).length).toBe(6)
+            body.comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    body: expect.any(String),
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String)
+                })
+            })
+        })
+    });
+
+    test('Returns 204 and no content when given a valid comment_id', () => {
+        return request(app)
+        .delete('/api/comments/15')
+        .expect(204)
+        .then(() => {
+            db.query('SELECT comment_id FROM comments').then(({rowCount}) => {
+                expect(rowCount).toBe(totalCommentsBeforeDelete -1)
+            })
+        })
+    });
+
+    test('Returns 404 error if given invalid comment_id', () => {
+        return request(app)
+        .delete('/api/comments/15555')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Comment not found!')
+        })
+    })
+    
+});
+
+
