@@ -25,7 +25,6 @@ describe('/api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then(({body}) => {
-            console.log(body.allTopics)
             expect(Array.isArray(body.allTopics)).toBe(true);
             expect(body.allTopics.length).toBe(3);
             body.allTopics.forEach((topic) => {
@@ -163,7 +162,6 @@ describe('/api/articles/:article_id', () => {
         .get('/api/articles/1')
         .expect(200)
         .then(({body}) => {
-            console.log(body)
             expect(Object.keys(body.article[0]).length).toBe(7);
             expect(body.article[0]).toMatchObject({
                     author: expect.any(String),
@@ -486,7 +484,6 @@ describe('GET /api/users', () => {
             });
         })
     });
-
 });
 
 describe('DELETE + GET COMMENTS /api/comments/:comment_id', () => {
@@ -520,7 +517,8 @@ describe('DELETE + GET COMMENTS /api/comments/:comment_id', () => {
         .delete('/api/comments/15')
         .expect(204)
         .then(() => {
-            db.query('SELECT comment_id FROM comments').then(({rowCount}) => {
+            db.query('SELECT comment_id FROM comments')
+            .then(({rowCount}) => {
                 expect(rowCount).toBe(totalCommentsBeforeDelete -1)
             })
         })
@@ -534,7 +532,6 @@ describe('DELETE + GET COMMENTS /api/comments/:comment_id', () => {
             expect(body.msg).toBe('Comment not found!')
         })
     })
-    
 });
 
 

@@ -1,10 +1,20 @@
-const { selectAllArticles, selectArticleById, selectCommentsForArticle, insertComment, updateArticle } = require("../models/articles-model.js");
-const { checkArticleExists, checkUserExists, checkTopicExists, checkObjectStructure } = require("../utils/utils.js")
+const { 
+        selectAllArticles, 
+        selectArticleById, 
+        selectCommentsForArticle, 
+        insertComment, 
+        updateArticle } = require("../models/articles-model.js");
+const { 
+        checkArticleExists, 
+        checkUserExists, 
+        checkTopicExists, 
+        checkObjectStructure } = require("../utils/utils.js")
 
 exports.getAllArticles = (req, res, next) => {
-    const query = req.query;
 
-    if (req.query.topic) {
+    const {query} = req;
+
+    if (query.topic) {
         checkTopicExists(query.topic)
         .then((topicExists) => {
             if (!topicExists) next({ statusCode: 404, msg: 'Topic not found!'});

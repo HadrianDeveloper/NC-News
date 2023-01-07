@@ -1,4 +1,3 @@
-const { rows } = require('pg/lib/defaults.js');
 const db = require('../db/connection.js')
 
 exports.selectAllTopics = () => {

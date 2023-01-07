@@ -9,6 +9,7 @@ exports.getAllComments = (req, res, next) => {
 }
 
 exports.deleteCommentById = (req, res, next) => {
+    
     const commentId = req.params.comment_id;
 
     removeComment(commentId)

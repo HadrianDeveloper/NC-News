@@ -30,10 +30,11 @@ exports.selectAllArticles = (query) => {
         if (direction !== 'ASC') direction = 'DESC';
         sqlQuery += direction;
 
-    return db.query(sqlQuery).then(({rows}) => {
-        console.log(rows)
-        return rows; 
-    })
+    return db
+        .query(sqlQuery)
+        .then(({rows}) => {
+            return rows; 
+        })
 
 };
 
@@ -41,7 +42,7 @@ exports.selectArticleById = (id) => {
     return db
     .query(`
         SELECT * FROM articles
-        WHERE article_id = $1;
+        WHERE article_id = $1
     `, [id])
     .then(({rows}) => {
         return (!rows.length)
@@ -49,23 +50,6 @@ exports.selectArticleById = (id) => {
             : rows;
     })
 };
-
-exports.selectArticleById2 = (id) => {
-    return db
-      .select('articles.*')
-      .count({ comment_count: 'comment_id' })
-      .from('articles')
-      .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
-      .groupBy('articles.article_id')
-      .modify(query => {
-        if (id) query.where('articles.article_id', '=', id);
-      })
-      .then(([article]) => {
-        return article
-          ? article
-          : Promise.reject({ status: 404, msg: 'Non-existent id!' });
-      });
-  };
 
 exports.selectCommentsForArticle = (id) => {
     return db

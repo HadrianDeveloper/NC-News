@@ -19,7 +19,6 @@ app.get('/api/comments', getAllComments);
 app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.get('/api/users', getAllUsers)
-
 app.get('/api/topics', getAllTopics);
 
 app.get('*', handle404s)
